@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,400i,500&display=swap");
+
+$whiteFont: rgba(255, 255, 255, 0.7);
+$pinkFont: rgb(213, 79, 215);
+
+* {
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #1e1e25;
+  min-height: 100vh;
+}
+
+.layout__button {
+  margin: 10px 0px;
+  border: 1px solid $whiteFont;
+  border-radius: 10px;
+  font-weight: 500;
+  width: 150px;
+  color: $whiteFont;
+  height: 35px;
+}
+
+.container {
+  width: 600px;
+  min-height: 200px;
+  padding: 20px;
+  max-width: 96%;
+  border-radius: 20px;
+  background: #27293d;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.container__button--add,
+.container__input--submit,
+.container__button--delete {
+  cursor: pointer;
+}
+
+.container__button--add,
+.container__input--submit {
+  display: block;
+}
+
+.container__button--add {
+  background: #305cf4;
+}
+
+.container__input--submit {
+  background: $pinkFont;
+  margin-left: auto;
+}
+
+.form__fieldset {
+  border: 0;
+}
+
+.form__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form__fieldset--legend {
+  color: $whiteFont;
+}
+
+.container__input--text {
+  vertical-align: -webkit-baseline-middle;
+  flex: 5;
+  height: 40px;
+  padding: 15px;
+  border-radius: 10px;
+  background: none;
+  outline: none;
+  border: 2px solid #2a324e;
+  color: $whiteFont;
+}
+
+.container__input--text:focus {
+  border: 2px solid $pinkFont;
+}
+
+.container__button--delete {
+  font-weight: 600;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  vertical-align: -webkit-baseline-middle;
+  flex: 1;
+}
