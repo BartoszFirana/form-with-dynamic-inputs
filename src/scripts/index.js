@@ -4,14 +4,13 @@ const Input = function () {
 
 Input.prototype.render = function () {
     const fieldset = document.querySelector(".form__fieldset");
-    console.log(this.inputs);
     fieldset.innerHTML = this.inputs.map((input, index) => (
         `
         <fieldset id="${input.index}" class="form__fieldset">
             <legend class="form__fieldset--legend">${"hasło" + index}</legend>
             <div class="form__wrapper">
                 <input class="container__input--text" type="text" value="${input}"/>
-                <button id="${input.index}" onclick="${inputArray.delete(index)}" class="container__button--delete">X</button>
+                <button class="container__button--delete">X</button>
             </div>
         </fieldset>
     `
@@ -28,7 +27,22 @@ Input.prototype.delete = function (index) {
 }
 
 const inputArray = new Input();
-
 inputArray.render();
 
-inputArray.add("");
+const addButton = document.querySelector(".container__button--add");
+const deleteButton = document.querySelectorAll(".container__button--delete");
+
+addButton.addEventListener("click", e => {
+    e.preventDefault();
+    const maxInputNumbers = inputArray.inputs.length <= 5;
+    if (maxInputNumbers) {
+        inputArray.add("");
+    }
+})
+
+Array.from(deleteButton).forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        console.log("click deleteButton", deleteButton);
+    });
+})
