@@ -6,10 +6,10 @@ const Input = function () {
 Input.prototype.render = function () {
     fieldset.innerHTML = this.inputs.map((input, index) => (
         `
-        <fieldset id="${input.index}" class="form__fieldset">
+        <fieldset class="form__fieldset">
             <legend class="form__fieldset--legend">${"hasło" + index}</legend>
             <div class="form__wrapper">
-                <input class="container__input--text" type="text" value="${input}"/>
+                <input id="${index}" class="container__input--text" type="text" value="${input}"/>
                 <button id="${index}" class="container__button--delete">X</button>
             </div>
         </fieldset>
@@ -27,15 +27,25 @@ Input.prototype.delete = function (index) {
     inputArray.render();
 }
 
+Input.prototype.onChange = function (index, value) {
+    this.inputs.splice(index, 1, value);
+    console.log(this.inputs);
+}
+
+Input.prototype.onSave = function () {
+    const theArray = this.inputs
+    location.href = `/?search=${this.inputs[0]}&passwords=${this.inputs.map((input) => input + ";")}`
+}
+
 const inputArray = new Input();
 inputArray.render();
 
 const addButton = document.querySelector(".container__button--add");
-const deleteButton = document.querySelectorAll(".container__button--delete");
+const saveButton = document.querySelector(".container__input--submit");
 
 addButton.addEventListener("click", e => {
     e.preventDefault();
-    const maxInputNumbers = inputArray.inputs.length <= 5;
+    const maxInputNumbers = inputArray.inputs.length < 5;
     if (maxInputNumbers) {
         inputArray.add("");
     }
@@ -43,8 +53,23 @@ addButton.addEventListener("click", e => {
 
 fieldset.addEventListener('click', e => {
     e.preventDefault();
-    const classList = e.target.classList.value;
-    if (classList == "container__button--delete") {
+    const isButtonDelete = e.target.classList.value === "container__button--delete";
+    const isIdButton = e.target.id > 0;
+    console.log(e.target.classList.value);
+    if (isButtonDelete && isIdButton) {
         inputArray.delete(e.target.id);
     }
+})
+
+fieldset.addEventListener('input', e => {
+    const isClassList = e.target.classList.value === "container__input--text";
+    const inputId = e.target.id;
+    if (isClassList) {
+        inputArray.onChange(inputId, e.target.value);
+    }
+})
+
+saveButton.addEventListener('click', e => {
+    e.preventDefault();
+    inputArray.onSave();
 })
