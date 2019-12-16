@@ -1,16 +1,18 @@
 const fieldset = document.querySelector(".form__fieldset");
+const inputsMaxNumbers = 6;
+
 const Input = function () {
-    this.inputs = ["text"];
+    this.inputs = ["domyślny"];
 }
 
 Input.prototype.render = function () {
     fieldset.innerHTML = this.inputs.map((input, index) => (
         `
         <fieldset class="form__fieldset">
-            <legend class="form__fieldset--legend">${"hasło" + index}</legend>
+            <legend class="form__fieldset--legend">hasło${index + 1}</legend>
             <div class="form__wrapper">
                 <input id="${index}" class="container__input--text" type="text" value="${input}"/>
-                <button id="${index}" class="container__button--delete">X</button>
+                <button id="${index}" class="${index === 0 ? "container__button--none" : "container__button--delete"}" ${index === 0 ? "disable" : ""}></button>
             </div>
         </fieldset>
     `
@@ -18,23 +20,38 @@ Input.prototype.render = function () {
 };
 
 Input.prototype.add = function (value) {
+    function isEmptyInput(element, index) {
+        return (index === "");
+    }
+    if (this.inputs.filter(isEmptyInput)) {
+        console.log("pusto");
+    }
     this.inputs.push(value);
     inputArray.render();
+    if (this.inputs.length === inputsMaxNumbers) {
+        addButton.disabled = true;
+    }
+    const allInputs = document.querySelectorAll(".container__input--text");
+    allInputs[allInputs.length - 1].focus();
 }
 
 Input.prototype.delete = function (index) {
     this.inputs.splice(index, 1);
     inputArray.render();
+    if (this.inputs.length < inputsMaxNumbers) {
+        addButton.disabled = false;
+    }
 }
 
 Input.prototype.onChange = function (index, value) {
     this.inputs.splice(index, 1, value);
-    console.log(this.inputs);
 }
 
 Input.prototype.onSave = function () {
-    const theArray = this.inputs
-    location.href = `/?search=${this.inputs[0]}&passwords=${this.inputs.map((input) => input + ";")}`
+    function firstIndexWithout(element, index) {
+        return (index > 0 ? element : null);
+    }
+    location.href = `/?search=${this.inputs[0]}&passwords=${this.inputs.map(firstIndexWithout).join(';')}`
 }
 
 const inputArray = new Input();
@@ -45,7 +62,7 @@ const saveButton = document.querySelector(".container__input--submit");
 
 addButton.addEventListener("click", e => {
     e.preventDefault();
-    const maxInputNumbers = inputArray.inputs.length < 5;
+    const maxInputNumbers = inputArray.inputs.length < inputsMaxNumbers;
     if (maxInputNumbers) {
         inputArray.add("");
     }
@@ -55,7 +72,6 @@ fieldset.addEventListener('click', e => {
     e.preventDefault();
     const isButtonDelete = e.target.classList.value === "container__button--delete";
     const isIdButton = e.target.id > 0;
-    console.log(e.target.classList.value);
     if (isButtonDelete && isIdButton) {
         inputArray.delete(e.target.id);
     }
