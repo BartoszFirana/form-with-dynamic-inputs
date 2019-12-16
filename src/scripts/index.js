@@ -20,19 +20,25 @@ Input.prototype.render = function () {
 };
 
 Input.prototype.add = function (value) {
-    function isEmptyInput(element, index) {
-        return (index === "");
+    const errorParaghraph = document.querySelector(".container__paragraph--error");
+
+    function isInputEmpty(element, index) {
+        return element === "";
     }
-    if (this.inputs.filter(isEmptyInput)) {
+
+    if (this.inputs.filter(isInputEmpty).length > 0) {
         console.log("pusto");
+        errorParaghraph.innerHTML = `Nie wszystkie pola są wypełnione!`;
+    } if (this.inputs.filter(isInputEmpty).length === 0) {
+        errorParaghraph.innerHTML = ``;
+        this.inputs.push(value);
+        inputArray.render();
+        if (this.inputs.length === inputsMaxNumbers) {
+            addButton.disabled = true;
+        }
+        const allInputs = document.querySelectorAll(".container__input--text");
+        allInputs[allInputs.length - 1].focus();
     }
-    this.inputs.push(value);
-    inputArray.render();
-    if (this.inputs.length === inputsMaxNumbers) {
-        addButton.disabled = true;
-    }
-    const allInputs = document.querySelectorAll(".container__input--text");
-    allInputs[allInputs.length - 1].focus();
 }
 
 Input.prototype.delete = function (index) {
