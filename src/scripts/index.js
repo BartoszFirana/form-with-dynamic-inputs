@@ -2,9 +2,7 @@ class Input {
     constructor() {
         this.inputs = ["domyślny"];
     }
-};
 
-class Render extends Input {
     render() {
         fieldset.innerHTML = this.inputs.map((input, index) => (`
         <fieldset class="form__fieldset">
@@ -16,22 +14,19 @@ class Render extends Input {
         </fieldset>
     `)).join(``);
     }
-}
 
-class Add extends Input {
     add(value) {
         const errorParaghraph = document.querySelector(".container__paragraph--error");
         function isInputEmpty(element) {
             return element === "";
         }
         if (this.inputs.filter(isInputEmpty).length > 0) {
-            console.log("pusto");
             errorParaghraph.innerHTML = `Nie wszystkie pola są wypełnione!`;
         }
         if (this.inputs.filter(isInputEmpty).length === 0) {
             errorParaghraph.innerHTML = ``;
             this.inputs.push(value);
-            renderArray.render();
+            inputArray.render();
             if (this.inputs.length === inputsMaxNumbers) {
                 addButton.disabled = true;
             }
@@ -39,25 +34,19 @@ class Add extends Input {
             allInputs[allInputs.length - 1].focus();
         }
     }
-}
 
-class Delete extends Input {
     delete(index) {
         this.inputs.splice(index, 1);
-        renderArray.render();
+        inputArray.render();
         if (this.inputs.length < inputsMaxNumbers) {
             addButton.disabled = false;
         }
     }
-}
 
-class OnChange extends Input {
     onChange(index, value) {
         this.inputs.splice(index, 1, value);
     }
-}
 
-class OnSave extends Input {
     onSave() {
         function firstIndexWithout(element, index) {
             return (index > 0 ? element : null);
@@ -69,21 +58,17 @@ class OnSave extends Input {
 const fieldset = document.querySelector(".form__fieldset");
 const inputsMaxNumbers = 6;
 
-const renderArray = new Render();
-const addArray = new Add();
-const deleteArray = new Delete();
-const onChangeArray = new OnChange();
-const onSave = new OnSave();
-renderArray.render();
+const inputArray = new Input();
+inputArray.render();
 
 const addButton = document.querySelector(".container__button--add");
 const saveButton = document.querySelector(".container__input--submit");
 
 addButton.addEventListener("click", e => {
     e.preventDefault();
-    const maxInputNumbers = addArray.inputs.length < inputsMaxNumbers;
+    const maxInputNumbers = inputArray.inputs.length < inputsMaxNumbers;
     if (maxInputNumbers) {
-        addArray.add("");
+        inputArray.add("");
     }
 })
 
@@ -92,7 +77,7 @@ fieldset.addEventListener('click', e => {
     const isButtonDelete = e.target.classList.value === "container__button--delete";
     const isIdButton = e.target.id > 0;
     if (isButtonDelete && isIdButton) {
-        deleteArray.delete(e.target.id);
+        inputArray.delete(e.target.id);
     }
 })
 
@@ -100,11 +85,11 @@ fieldset.addEventListener('input', e => {
     const isClassList = e.target.classList.value === "container__input--text";
     const inputId = e.target.id;
     if (isClassList) {
-        renderArray.onChange(inputId, e.target.value);
+        inputArray.onChange(inputId, e.target.value);
     }
 })
 
 saveButton.addEventListener('click', e => {
     e.preventDefault();
-    renderArray.onSave();
+    inputArray.onSave();
 })
