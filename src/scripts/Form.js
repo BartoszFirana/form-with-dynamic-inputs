@@ -1,3 +1,67 @@
+export default class Form {
+    fieldset = null;
+    inputValues = ['wartosc'];
+
+    constructor(basicNode) {
+        this.basicNode = basicNode;
+    }
+
+    init() {
+        this.setDomElements()
+
+        if (!this.fieldset) {
+            return;
+        }
+
+        this.render();
+        this.bindEventHandlers();
+    }
+
+    setDomElements() {
+        this.fieldset = this.basicNode.querySelector(".form__fieldset")
+    }
+
+    render() {
+        this.fieldset.innerHTML = this.renderFieldset(this.inputValues)
+    }
+
+    renderFieldset(inputValues) {
+        return inputValues.map((input, index) => (`
+        <fieldset class="form__fieldset">
+            <legend class="form__fieldset--legend">hasło${index + 1}</legend>
+            <div class="form__wrapper">
+                <input class="container__input--text" type="text" value="${input}"/>
+                <button class="${index === 0 ? "container__button--none" : "container__button--delete"}" ${index === 0 ? "disable" : ""}></button>
+            </div>
+        </fieldset>
+    `)).join(``);
+    }
+
+    bindEventHandlers() {
+        console.log("1 bindEventHandlers");
+        const { fieldset } = this;
+        console.log("fieldset ma typ: ", typeof (fieldset));
+        console.log("fieldset: ", fieldset)
+        fieldset.addEventListener('click', e => {
+            e.preventDefault();
+            this.onClickHandler(e);
+            console.log("3 e.target.value", e.target.value);
+        });
+        fieldset.addEventListener('input', this.onInputHandler);
+    }
+
+    onClickHandler = (e) => {
+        console.log(e.target);
+    }
+
+    onInputHandler = (e) => {
+        // e.target
+    }
+}
+
+
+
+
 /**
 class Input {
     constructor() {
@@ -96,43 +160,3 @@ saveButton.addEventListener('click', e => {
 })
 
 */
-
-export class Form {
-    constructor(basicNode) {
-        this.fieldset = null;
-        this.inputValues = ['wartosc'];
-        this.basicNode = basicNode;
-    }
-
-    init() {
-        this.setDomElements()
-
-        if (!this.fieldset) {
-            return;
-        }
-
-        this.render();
-        this.bindEventHandlers();
-    }
-
-    setDomElements() {
-        this.fieldset = this.querySelector(".form__fieldset")
-    }
-
-    render() {
-        this.fieldset.innerHTML = renderFieldset(inputValues, index)
-    }
-
-    bindEventHandlers() {
-        this.fieldset.addEventListener('click', onClickHandler);
-        this.fieldset.addEventListener('input', onInputHandler);
-    }
-
-    onClickHandler = (e) => {
-        // e.target
-    }
-
-    onInputHandler = (e) => {
-        // e.target
-    }
-}
