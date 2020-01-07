@@ -21,8 +21,9 @@ export default class Form {
         this.fieldset = this.basicNode.querySelector(".form__fieldset")
     }
 
-    render() {
-        this.fieldset.innerHTML = this.renderFieldset(this.inputValues)
+    render = () => {
+        const { fieldset } = this;
+        fieldset.innerHTML = this.renderFieldset(this.inputValues);
     }
 
     renderFieldset(inputValues) {
@@ -30,32 +31,59 @@ export default class Form {
         <fieldset class="form__fieldset">
             <legend class="form__fieldset--legend">hasło${index + 1}</legend>
             <div class="form__wrapper">
-                <input class="container__input--text" type="text" value="${input}"/>
-                <button class="${index === 0 ? "container__button--none" : "container__button--delete"}" ${index === 0 ? "disable" : ""}></button>
+                <input data-input-index="${index}" class="container__input--text" type="text" value="${input}"/>
+                <button data-btn-index="${index}" class="${index === 0 ? "container__button--none" : "container__button--delete"}" ${index === 0 ? "disable" : ""}></button>
             </div>
         </fieldset>
     `)).join(``);
     }
 
+    add(value) {
+        const inputsMaxNumbers = 6;
+        const { inputValues, render } = this;
+        const errorParaghraph = document.querySelector(".container__paragraph--error");
+        function isInputEmpty(element) {
+            return element === "";
+        }
+        if (inputValues.filter(isInputEmpty).length > 0) {
+            errorParaghraph.innerHTML = `Nie wszystkie pola są wypełnione!`;
+        }
+        if (inputValues.filter(isInputEmpty).length === 0) {
+            errorParaghraph.innerHTML = ``;
+            inputValues.push(value);
+            render();
+            if (inputValues.length === inputsMaxNumbers) {
+                addButton.disabled = true;
+            }
+            const allInputs = document.querySelectorAll(".container__input--text");
+            allInputs[allInputs.length - 1].focus();
+        }
+    }
+
+    delete(index) {
+        this.inputValues.splice(index, 1);
+        this.init();
+    }
+
     bindEventHandlers() {
-        console.log("1 bindEventHandlers");
-        const { fieldset } = this;
-        console.log("fieldset ma typ: ", typeof (fieldset));
-        console.log("fieldset: ", fieldset)
-        fieldset.addEventListener('click', e => {
-            e.preventDefault();
-            this.onClickHandler(e);
-            console.log("3 e.target.value", e.target.value);
-        });
+        const { basicNode, fieldset } = this;
+        basicNode.addEventListener('click', this.onClickHandler);
         fieldset.addEventListener('input', this.onInputHandler);
     }
 
     onClickHandler = (e) => {
-        console.log(e.target);
+        e.preventDefault();
+        const target = e.target.className;
+        if (target === "container__button--add layout__button") {
+            this.add("")
+        } if (target === "container__button--delete") {
+            this.delete(e.target.dataset.btnIndex);
+        }
     }
 
     onInputHandler = (e) => {
-        // e.target
+        const { inputValues } = this;
+        inputValues.splice(e.target.dataset.inputIndex, 1, e.target.value);
     }
 }
 
