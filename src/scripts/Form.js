@@ -1,12 +1,15 @@
 export default class Form {
     fieldset = null;
-    inputValues = ['wartosc'];
+    addButton = null;
+    errorParaghraph = null;
+    inputValues = [];
 
     constructor(basicNode) {
         this.basicNode = basicNode;
     }
 
     init() {
+        this.setSearchParam()
         this.setDomElements()
 
         if (!this.fieldset) {
@@ -18,12 +21,26 @@ export default class Form {
     }
 
     setDomElements() {
-        this.fieldset = this.basicNode.querySelector(".form__fieldset")
+        this.fieldset = this.basicNode.querySelector(".form__fieldset");
+        this.addButton = document.querySelector(".container__button--add");
+        this.errorParaghraph = document.querySelector(".container__paragraph--error");
+    }
+
+    setSearchParam() {
+        const url = new URL(window.location);
+        const params = new URLSearchParams(url.search);
+
+        if (params.has("search")) {
+            const value = params.get("search");
+            this.inputValues = [`${value}`];
+        } if (!params.has("search")) {
+            this.inputValues = [`all`];
+        }
     }
 
     render = () => {
-        const { fieldset } = this;
-        fieldset.innerHTML = this.renderFieldset(this.inputValues);
+        const { fieldset, renderFieldset, inputValues } = this;
+        fieldset.innerHTML = renderFieldset(inputValues);
     }
 
     renderFieldset(inputValues) {
@@ -40,8 +57,8 @@ export default class Form {
 
     add(value) {
         const inputsMaxNumbers = 6;
-        const { inputValues, render } = this;
-        const errorParaghraph = document.querySelector(".container__paragraph--error");
+        const { inputValues, render, addButton, errorParaghraph } = this;
+
         function isInputEmpty(element) {
             return element === "";
         }
@@ -65,6 +82,12 @@ export default class Form {
         this.init();
     }
 
+    save() {
+        const { inputValues } = this;
+
+        location.href = `/?search=${inputValues[0]}&passwords=${inputValues.slice(1).join(";")}`;
+    }
+
     bindEventHandlers() {
         const { basicNode, fieldset } = this;
         basicNode.addEventListener('click', this.onClickHandler);
@@ -78,6 +101,8 @@ export default class Form {
             this.add("")
         } if (target === "container__button--delete") {
             this.delete(e.target.dataset.btnIndex);
+        } if (target === "container__input--submit layout__button") {
+            this.save();
         }
     }
 
@@ -86,105 +111,3 @@ export default class Form {
         inputValues.splice(e.target.dataset.inputIndex, 1, e.target.value);
     }
 }
-
-
-
-
-/**
-class Input {
-    constructor() {
-        this.inputs = ["domyślny"];
-    }
-
-    render() {
-        fieldset.innerHTML = this.inputs.map((input, index) => (`
-        <fieldset class="form__fieldset">
-            <legend class="form__fieldset--legend">hasło${index + 1}</legend>
-            <div class="form__wrapper">
-                <input id="${index}" class="container__input--text" type="text" value="${input}"/>
-                <button id="${index}" class="${index === 0 ? "container__button--none" : "container__button--delete"}" ${index === 0 ? "disable" : ""}></button>
-            </div>
-        </fieldset>
-    `)).join(``);
-    }
-
-    add(value) {
-        const errorParaghraph = document.querySelector(".container__paragraph--error");
-        function isInputEmpty(element) {
-            return element === "";
-        }
-        if (this.inputs.filter(isInputEmpty).length > 0) {
-            errorParaghraph.innerHTML = `Nie wszystkie pola są wypełnione!`;
-        }
-        if (this.inputs.filter(isInputEmpty).length === 0) {
-            errorParaghraph.innerHTML = ``;
-            this.inputs.push(value);
-            inputArray.render();
-            if (this.inputs.length === inputsMaxNumbers) {
-                addButton.disabled = true;
-            }
-            const allInputs = document.querySelectorAll(".container__input--text");
-            allInputs[allInputs.length - 1].focus();
-        }
-    }
-
-    delete(index) {
-        this.inputs.splice(index, 1);
-        inputArray.render();
-        if (this.inputs.length < inputsMaxNumbers) {
-            addButton.disabled = false;
-        }
-    }
-
-    onChange(index, value) {
-        this.inputs.splice(index, 1, value);
-    }
-
-    onSave() {
-        function firstIndexWithout(element, index) {
-            return (index > 0 ? element : null);
-        }
-        location.href = `/?search=${this.inputs[0]}&passwords=${this.inputs.map(firstIndexWithout).join(';')}`;
-    }
-}
-
-const fieldset = document.querySelector(".form__fieldset");
-const inputsMaxNumbers = 6;
-
-const inputArray = new Input();
-inputArray.render();
-
-const addButton = document.querySelector(".container__button--add");
-const saveButton = document.querySelector(".container__input--submit");
-
-addButton.addEventListener("click", e => {
-    e.preventDefault();
-    const maxInputNumbers = inputArray.inputs.length < inputsMaxNumbers;
-    if (maxInputNumbers) {
-        inputArray.add("");
-    }
-})
-
-fieldset.addEventListener('click', e => {
-    e.preventDefault();
-    const isButtonDelete = e.target.classList.value === "container__button--delete";
-    const isIdButton = e.target.id > 0;
-    if (isButtonDelete && isIdButton) {
-        inputArray.delete(e.target.id);
-    }
-})
-
-fieldset.addEventListener('input', e => {
-    const isClassList = e.target.classList.value === "container__input--text";
-    const inputId = e.target.id;
-    if (isClassList) {
-        inputArray.onChange(inputId, e.target.value);
-    }
-})
-
-saveButton.addEventListener('click', e => {
-    e.preventDefault();
-    inputArray.onSave();
-})
-
-*/
