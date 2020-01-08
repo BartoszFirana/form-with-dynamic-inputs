@@ -9,7 +9,6 @@ export default class Form {
     }
 
     init() {
-        this.setSearchParam()
         this.setDomElements()
 
         if (!this.fieldset) {
