@@ -2,6 +2,10 @@
 
 Źródło: https://github.com/czechue/kodifaj-tasks
 
+## Demo zrealizowanego zadania
+
+Demo: http://ugly-amount.surge.sh/
+
 ## Treść zadania
 
 1. Instrukcja
